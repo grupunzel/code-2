@@ -1,0 +1,103 @@
+
+#include <iostream>
+#include <chrono>
+#include<ctime>
+using namespace std;
+using namespace chrono;
+class List                              
+{
+	int x, count;
+	List* head, * tail, * next, * prev;                 
+public:
+	List() :head(0), tail(0) {};         
+	~List();
+	void Show();                       
+	void Add(int x);                   
+};
+
+void List::Add(int x)
+{
+	List* temp = new List;               
+	temp->next = 0;                   
+	temp->x = x;                         
+	count += 1;
+	if (head != 0)                    
+	{
+		tail->next = temp;               
+		temp->prev = tail;               
+		tail = temp;                     
+	}
+	else 
+	{
+		temp->prev = 0;             
+		head = tail = temp;            
+	}
+}
+
+void AddMass(int* mass, int& length) {
+	for (int i = 0; i < length; i++) {
+		mass[i] = (rand() % 100) + 1;
+	}
+}
+
+void List::Show()
+{
+	cout << "Список: ";
+	List* temp = new List;
+	temp = head;                      
+	while (temp != 0)             
+	{
+		cout << temp->x << " ";        
+		temp = temp->next;             
+	}
+	cout << "\n";
+}
+
+void ShowMass(int* mass, int& length) {
+	cout << "Массив: ";
+	for (int i = 0; i < length; i++) {
+		cout << mass[i] << " ";
+	}
+	cout << "\n";
+}
+
+List::~List()                           
+{
+	while (head)                       
+	{
+		tail = head->next;             
+		delete head;                   
+		head = tail;                   
+	}
+}
+
+int main()
+{
+	srand(time(0));
+	setlocale(0, "");
+	auto start = chrono::steady_clock::now();
+	auto end = chrono::steady_clock::now();
+	int length = 0, minus = 0;
+	List lst;
+	cout << "Будут созданы список и массив с произвольными числами от 0 до 99." << endl;
+	cout << "Введите их длину: " << endl;
+	cin >> length;
+	int* mass = new int[length];
+	for (int i = 0; i < length; i++)
+		lst.Add(rand() % 99);
+	AddMass(mass, length);
+	lst.Show();
+	ShowMass(mass, length);
+	system("pause");
+	cout << "Уничтожение массива и списка." << endl;
+	start = chrono::steady_clock::now();
+	lst.~List();
+	end = chrono::steady_clock::now();
+	cout << "Время уничтожения списка: " << chrono::duration_cast<chrono::nanoseconds>(end - start).count() << " наносекунд" << endl;
+
+	start = chrono::steady_clock::now();
+	delete[] mass;
+	end = chrono::steady_clock::now();
+	cout << "Время уничтожения массива: " << chrono::duration_cast<chrono::nanoseconds>(end - start).count() << " наносекунд" << endl;
+	system("pause");
+}
