@@ -1,0 +1,279 @@
+#include <stdlib.h>
+#include <iostream>
+#include<ctime>
+#include <chrono>
+using namespace std;
+
+class List                              
+{
+    int x, count;
+    List* head, * tail, * next, * prev;                 
+public:
+    List() :head(0), tail(0) {};    
+    ~List();                           
+    void Show();                       
+    void Add(int x);                   
+    void AddFirst(int x);              
+    void Input(int a, int b);
+    void DelIndex(int z);
+    void GetIndex(int index3);
+    void Swap(int index, int index2);
+};
+
+void List::AddFirst(int x) {
+    List* temp = new List;
+    temp->next = 0;                   
+    temp->prev = 0;
+    temp->x = x;
+    count += 1;
+    if (head != 0) {                  
+        head->prev = temp;               
+        temp->next = head;              
+        head = temp;                    
+    }
+    else {                          
+        head = tail = temp;
+    }
+}
+
+List::~List()                           
+{
+    while (head)                      
+    {
+        tail = head->next;            
+        delete head;                  
+        head = tail;                   
+    }
+}
+
+void List::Add(int x)
+{
+    List* temp = new List;               
+    temp->next = 0;                   
+    temp->x = x;                         
+    count += 1;
+    if (head != 0)                    
+    {
+        tail->next = temp;               
+        temp->prev = tail;               
+        tail = temp;                     
+    }
+    else 
+    {
+        temp->prev = 0;               
+        head = tail = temp;              
+    }
+}
+
+void List::Show()
+{
+    List* temp = new List;
+    temp = head;                       
+    while (temp != 0)              
+    {
+        cout << temp->x << " ";        
+        temp = temp->next;            
+    }
+    cout << "\n";
+}
+
+void List::Input(int a, int b) {
+    if (a == count + 1)
+        Add(b);
+    else {
+        List* temp = new List; 
+        temp->x = b; 
+        if (head == 0) 
+        {
+            temp->next = temp; 
+            temp->prev = temp; 
+            head = temp; 
+        }
+        else
+        {
+            List* p = head;
+            for (int i = a; i > 1; i--)
+                p = p->next;
+            p->prev->next = temp;
+            temp->prev = p->prev;
+            temp->next = p;
+            p->prev = temp;
+        }
+    }
+}
+
+void List::DelIndex(int z)
+{
+    int k = 1;
+    List* Del = head;
+    while (k < z)
+    {
+        Del = Del->next;
+        k++;
+    }
+    List* PrevDel = Del->prev;
+    List* AfterDel = Del->next;
+
+    
+    if (PrevDel != 0 && count != 1)
+        PrevDel->next = AfterDel;
+    
+    if (AfterDel != 0 && count != 1)
+        AfterDel->prev = PrevDel;
+
+   
+    if (z == 1)
+        head = AfterDel;
+    if (z == count)
+        tail = PrevDel;
+
+    delete Del;
+    count--;
+}
+
+void List::GetIndex(int index3) {
+    List* temp = new List;
+    temp = head;
+    int i = 0;
+
+    while (temp && i < index3) {
+        temp = temp->next;
+        i++;
+    }
+
+    cout << temp->x << endl;
+}
+
+void List::Swap(int index, int index2)
+{
+    List* temp = new List;
+    temp = head;
+    for (int i = 0; i < index; i++)
+    {
+        temp = temp->next;
+
+    }
+    List* temp1 = new List;
+    temp1 = head;
+    for (int i = 0; i < index2; i++)
+    {
+        temp1 = temp1->next;
+    }
+    int k = temp->x;
+    temp->x = temp1->x;
+    temp1->x = k;
+}
+
+int main()
+{
+    List lst;
+    int choice, choice2;
+    int a, b, z, c, n;
+    srand(time(0));
+    setlocale(0, "");
+
+    while (true)
+    {
+        auto start = chrono::steady_clock::now();
+        auto end = chrono::steady_clock::now();
+        cout << "          Меню\n" <<
+            "1 - Вводите количество элементов в списке, который будет автоматически заполняться случайными числами (0 до 99)\n" <<
+            "2 - Вводите в консоль элементы списка\n" <<
+            "3 - Работа с элементами двусвязного списка\n" <<
+            "4 - Выйти из программы\n" << endl;
+        cin >> choice;
+        system("cls");
+        switch (choice) {
+        case 1:
+            cout << "Введите количество элементов в списке: \n";
+            cin >> n;
+            start = chrono::steady_clock::now();
+            for (int i = 0; i < n; i++)
+                lst.Add(rand() % 99);
+            end = chrono::steady_clock::now();
+            lst.Show();
+            cout << "Время создания списка: " << chrono::duration_cast<chrono::nanoseconds>(end - start).count() << " наносекунд" << endl;
+            break;
+        case 2:
+            cout << "Введите в консоль элементы списка: (введите 0, чтобы закончить список)" << endl;
+            int elem;
+            cin >> elem;
+            while (elem != 0)
+            {
+                lst.Add(elem);
+                cin >> elem;
+            }
+            lst.Show();
+            break;
+        case 3:
+            while (true)
+            {
+                cout << "          Меню\n" <<
+                    "1 - Вставить элемент в любую позицию списка \n" <<
+                    "2 - Удалить любой элемент в списке \n" <<
+                    "3 - Поменять 2 любых элемента в списке \n" <<
+                    "4 - Вывести элемент списка  \n" <<
+                    "5 - Выйти из программы\n" << endl;
+                cin >> choice2;
+                system("cls");
+                switch (choice2) {
+                case 1:
+                    cout << "Введите индес элемента: \n";
+                    cin >> a;
+                    cout << "Введите значение элемента: \n";
+                    cin >> b;
+                    start = chrono::steady_clock::now();
+                    if (a == 1) {
+                        lst.AddFirst(b);
+                    }
+                    else
+                        lst.Input(a, b);
+                    end = chrono::steady_clock::now();
+                    lst.Show();
+                    cout << "Время вставки элемента списка: " << chrono::duration_cast<chrono::nanoseconds>(end - start).count() << " наносекунд" << endl;
+                    break;
+                case 2:
+                    cout << "Введите индекс для удаления элемента двусвязного списка: " << endl;
+                    cin >> z;
+                    start = chrono::steady_clock::now();
+                    lst.DelIndex(z);
+                    end = chrono::steady_clock::now();
+                    lst.Show();
+                    cout << "Время удаления элемента списка: " << chrono::duration_cast<chrono::nanoseconds>(end - start).count() << " наносекунд" << endl;
+                    break;
+                case 3:
+                    cout << "Поменять 2 любых элемента в списке: " << endl;
+                    cout << "Исходный список" << endl;
+                    lst.Show();
+                    int index, index2;
+                    cout << "Введите индекс первого элемента: " << endl;
+                    cin >> index;
+                    cout << "Введите индекс второго элемента: " << endl;
+                    cin >> index2;
+                    lst.Swap(index, index2);
+                    cout << "Измененный список: " << endl;
+                    lst.Show();
+                    break;
+                case 4:
+                    cout << "Введите индекс элемента, который хотите вывести" << endl;
+                    int index3;
+                    cin >> index3;
+                    start = chrono::steady_clock::now();
+                    lst.GetIndex(index3);
+                    end = chrono::steady_clock::now();
+                    lst.Show();
+                    cout << "Время получения элемента списка: " << chrono::duration_cast<chrono::nanoseconds>(end - start).count() << " наносекунд" << endl;
+                    break;
+                case 5:
+
+                    exit(0);
+                }
+            }
+        case 4:
+
+            exit(0);
+        }
+    }
+    return 0;
+}
+
